@@ -1,0 +1,26 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.x'
+
+- script: |
+    python -m pip install --upgrade pip
+    pip install -r requirements.txt
+  displayName: 'Install dependencies'
+
+- script: |
+    python -m unittest discover tests
+  displayName: 'Run tests'
+
+- task: AzureWebApp@1
+  inputs:
+    azureSubscription: '<YOUR-AZURE-SERVICE-CONNECTION-NAME>'
+    appType: 'webApp'
+    appName: '<YOUR-AZURE-WEBAPP-NAME>'
+    package: '$(System.DefaultWorkingDirectory)'
